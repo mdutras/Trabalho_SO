@@ -16,6 +16,13 @@ def mergeSort(A, index, start, end):
                 else:
                     break
 
+def sortMatrix(procNec, recDisp):
+    pesos = np.array([sum(recDisp) / (num if num else 1) for num in recDisp])
+    sumM = np.array([sum(A * pesos) for A in procNec])
+    index = np.arange(len(procNec))
+    mergeSort(sumM, index, 0, len(procNec))
+    return index
+
 def pseudopredict(procNec, procAlloc, recDisp):
     doable = True
     tamCol = len(procAlloc)
@@ -36,13 +43,6 @@ def pseudopredict(procNec, procAlloc, recDisp):
         if not doable:
             break
     return doable
-
-def sortMatrix(procNec, recDisp):
-    pesos = np.array([sum(recDisp) / (num if num else 1) for num in recDisp])
-    sumM = np.array([sum(A * pesos) for A in procNec])
-    index = np.arange(len(procNec))
-    mergeSort(sumM, index, 0, len(procNec))
-    return index
 
 def banqueiro(procMax, procAlloc, recDisp):
     assert procMax.shape == procAlloc.shape
@@ -83,21 +83,21 @@ def banqueiro(procMax, procAlloc, recDisp):
 def main():
     print("Hi >:3")
     procMax = np.array([
-        [5,1,1,7],
-        [3,2,1,1],
-        [3,3,2,1],
-        [4,6,1,2],
-        [6,3,2,5]
+        [4,2,1,2],
+        [5,2,5,2],
+        [2,3,1,6],
+        [1,4,2,4],
+        [3,6,6,5]
     ])
     procAlloc = np.array([
-        [3,0,1,4],
-        [2,2,1,0],
+        [2,0,0,1],
         [3,1,2,1],
-        [0,5,1,0],
-        [4,2,1,2]
+        [2,1,0,3],
+        [1,3,1,2],
+        [1,4,3,2]
     ])
-    recDisp = np.array([0,3,0,2])
-    procNec = procMax - procAlloc
+    recDisp = np.array([3,3,2,1])
+    #procNec = procMax - procAlloc
     #print(procNec)
     banqueiro(procMax, procAlloc, recDisp)
     #pseudopredict(procNec, procAlloc, recDisp)
