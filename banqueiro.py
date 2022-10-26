@@ -1,4 +1,4 @@
-from numpy import array, zeros, arange
+import numpy as np
 
 def mergeSort(A, index, start, end):
     if((end - start) > 1):
@@ -16,10 +16,26 @@ def mergeSort(A, index, start, end):
                 else:
                     break
 
+def predict(procNec, procAlloc, recDisp):
+    tamCol = len(procAlloc)
+    tamRow = len(recDisp)
+    colNec = np.array([[procNec[i][j] for i in range(tamCol)] for j in range(tamRow)])
+    colAlloc = np.array([[procAlloc[i][j] for i in range(tamCol)] for j in range(tamRow)])
+    for i in range(tamRow):
+        index = np.arange(tamCol)
+        mergeSort(colNec[i], index, 0, tamRow)
+        disp = recDisp[i]
+        for j in range(tamCol):
+            if(disp >= colNec[i][j]):
+                disp += colAlloc[i][index[j]]
+            else:
+                print(f"Coluna {i} não pode ser processada")
+                break
+
 def sortMatrix(procNec, recDisp):
-    pesos = array([sum(recDisp) / (num if num else 1) for num in recDisp])
-    sumM = array([sum(A * pesos) for A in procNec])
-    index = arange(len(procNec))
+    pesos = np.array([sum(recDisp) / (num if num else 1) for num in recDisp])
+    sumM = np.array([sum(A * pesos) for A in procNec])
+    index = np.arange(len(procNec))
     mergeSort(sumM, index, 0, len(procNec))
     return index
 
@@ -28,7 +44,7 @@ def banqueiro(procMax, procAlloc, recDisp):
     assert procAlloc.shape[1] == recDisp.shape[0]
     procNec = procMax - procAlloc
     index = sortMatrix(procNec, recDisp)
-    termino = zeros(len(procNec))
+    termino = np.zeros(len(procNec))
     hold = 0
     steps = 0
     print(" p  i")
@@ -58,22 +74,28 @@ def banqueiro(procMax, procAlloc, recDisp):
 
 def main():
     print("Hi >:3")
-    procMax = array([
+    procMax = np.array([
         [5,1,1,7],
         [3,2,1,1],
         [3,3,2,1],
         [4,6,1,2],
         [6,3,2,5]
     ])
-    procAlloc = array([
+    procAlloc = np.array([
         [3,0,1,4],
         [2,2,1,0],
         [3,1,2,1],
         [0,5,1,0],
         [4,2,1,2]
     ])
-    recDisp = array([0,3,0,1])
-    banqueiro(procMax, procAlloc, recDisp)
+    recDisp = np.array([0,3,0,1])
+    procNec = procMax - procAlloc
+    print(recDisp)
+    print(procNec)
+    print(procAlloc)
+    #banqueiro(procMax, procAlloc, recDisp)
+    predict(procNec, procAlloc, recDisp)
+
 
 if __name__ == "__main__":
     main()
