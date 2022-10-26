@@ -16,7 +16,8 @@ def mergeSort(A, index, start, end):
                 else:
                     break
 
-def predict(procNec, procAlloc, recDisp):
+def pseudopredict(procNec, procAlloc, recDisp):
+    doable = True
     tamCol = len(procAlloc)
     tamRow = len(recDisp)
     colNec = np.array([[procNec[i][j] for i in range(tamCol)] for j in range(tamRow)])
@@ -29,8 +30,12 @@ def predict(procNec, procAlloc, recDisp):
             if(disp >= colNec[i][j]):
                 disp += colAlloc[i][index[j]]
             else:
-                print(f"Coluna {i} não pode ser processada")
+                #print(f"Coluna {i} não pôde ser processada")
+                doable = False
                 break
+        if not doable:
+            break
+    return doable
 
 def sortMatrix(procNec, recDisp):
     pesos = np.array([sum(recDisp) / (num if num else 1) for num in recDisp])
@@ -43,33 +48,36 @@ def banqueiro(procMax, procAlloc, recDisp):
     assert procMax.shape == procAlloc.shape
     assert procAlloc.shape[1] == recDisp.shape[0]
     procNec = procMax - procAlloc
-    index = sortMatrix(procNec, recDisp)
-    termino = np.zeros(len(procNec))
-    hold = 0
-    steps = 0
-    print(" p  i")
-    while(0 in termino and hold < len(procNec)):
-        for i in index:
-            if(0 not in termino or hold >= len(procNec)): #!TODO: Tentar um jeito melhor de fazer isso
-                break
-            steps += 1
-            if(termino[i]):
-                hold += 1
-                print(f"({steps}, {i}) V {hold}")
-                i += 1
-                continue
-            if( all(recDisp[j] >= procNec[i][j] for j in range(len(recDisp))) ):
-                print(f"({steps}, {i}) C")
-                termino[i] = 1
-                recDisp = recDisp + procAlloc[i]
-                hold = 0
-            else:
-                hold += 1
-                print(f"({steps}, {i}) P {hold}")
-    if(hold >= len(procNec)):
-        print("Fuleco faleceu ;-;")
+    if(pseudopredict(procNec, procAlloc, recDisp)):
+        index = sortMatrix(procNec, recDisp)
+        termino = np.zeros(len(procNec))
+        hold = 0
+        steps = 0
+        print(" p  i")
+        while(0 in termino and hold < len(procNec)):
+            for i in index:
+                if(0 not in termino or hold >= len(procNec)): #!TODO: Tentar um jeito melhor de fazer isso
+                    break
+                steps += 1
+                if(termino[i]):
+                    hold += 1
+                    print(f"({steps}, {i}) V {hold}")
+                    i += 1
+                    continue
+                if( all(recDisp[j] >= procNec[i][j] for j in range(len(recDisp))) ):
+                    print(f"({steps}, {i}) C")
+                    termino[i] = 1
+                    recDisp = recDisp + procAlloc[i]
+                    hold = 0
+                else:
+                    hold += 1
+                    print(f"({steps}, {i}) P {hold}")
+        if(hold >= len(procNec)):
+            print("Fuleco faleceu ;-;")
+        else:
+            print(f"Levou {steps} passos para completar o algoritmo :)")
     else:
-        print(f"Levou {steps} passos para completar o algoritmo :)")
+        print("Não é possível processar a fila de processos")
 
 
 def main():
@@ -88,13 +96,11 @@ def main():
         [0,5,1,0],
         [4,2,1,2]
     ])
-    recDisp = np.array([0,3,0,1])
+    recDisp = np.array([0,3,0,2])
     procNec = procMax - procAlloc
-    print(recDisp)
-    print(procNec)
-    print(procAlloc)
-    #banqueiro(procMax, procAlloc, recDisp)
-    predict(procNec, procAlloc, recDisp)
+    #print(procNec)
+    banqueiro(procMax, procAlloc, recDisp)
+    #pseudopredict(procNec, procAlloc, recDisp)
 
 
 if __name__ == "__main__":
