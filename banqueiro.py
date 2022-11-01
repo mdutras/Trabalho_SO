@@ -83,20 +83,20 @@ def banqueiro(procMax, procAlloc, recDisp):
 def main():
     print("Hi >:3")
     procMax = np.array([
-        [4,2,1,2],
-        [5,2,5,2],
-        [2,3,1,6],
-        [1,4,2,4],
-        [3,6,6,5]
+        [0,0,1,2],
+        [1,7,5,0],
+        [2,3,5,6],
+        [0,6,5,2],
+        [0,6,5,6]
     ])
     procAlloc = np.array([
-        [2,0,0,1],
-        [3,1,2,1],
-        [2,1,0,3],
-        [1,3,1,2],
-        [1,4,3,2]
+        [0,0,1,2],
+        [1,0,0,0],
+        [1,3,5,4],
+        [0,6,3,2],
+        [0,0,1,4]
     ])
-    recDisp = np.array([3,3,2,1])
+    recDisp = np.array([1,5,2,0])
     #procNec = procMax - procAlloc
     #print(procNec)
     banqueiro(procMax, procAlloc, recDisp)
