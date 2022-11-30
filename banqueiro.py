@@ -27,19 +27,44 @@ def pseudopredict(procNec, procAlloc, recDisp):
     doable = True
     tamCol = len(procAlloc)
     tamRow = len(recDisp)
+
+    # Checar se os recursos iniciar são insuficientes pra realizar qualquer processo
+    for i in range(tamCol):
+        points = 0
+        if sum([0 if procNec[i][j] > recDisp[j] else 1 for j in range(tamRow)]) < tamRow:
+            doable = False
+        if doable:
+            break
+    if not doable:
+        return doable
+
+    # Checar se há um processo que necessite de mais recursos que os recursos disponíveis
     colNec = np.array([[procNec[i][j] for i in range(tamCol)] for j in range(tamRow)])
     colAlloc = np.array([[procAlloc[i][j] for i in range(tamCol)] for j in range(tamRow)])
+    allRec = [sum(colAlloc[i]) + recDisp[i] for i in range(tamRow)]
+
     for i in range(tamRow):
+        if(allRec[i] < max(procNec[i])):
+            doable = False
+            break
+    if not doable:
+        return doable
+
+    # Checar se não há um caminho que possibilite a realização da fila de processos
+    index = np.arange(tamRow)
+    for i in range(tamRow):
+        val = recDisp[i]
+        col = colNec[i]
         index = np.arange(tamCol)
-        mergeSort(colNec[i], index, 0, tamRow)
-        disp = recDisp[i]
+        mergeSort(col, index, 0, tamCol)
+        print(index, col, val)
         for j in range(tamCol):
-            if(disp >= colNec[i][j]):
-                disp += colAlloc[i][index[j]]
-            else:
-                #print(f"Coluna {i} não pôde ser processada")
+            print(f"{val} < {col[j]} : {val < col[j]}")
+            if(val < col[j]):
                 doable = False
                 break
+            else:
+                val += colAlloc[i][index[j]]
         if not doable:
             break
     return doable
@@ -83,21 +108,21 @@ def banqueiro(procMax, procAlloc, recDisp):
 def main():
     print("Hi >:3")
     procMax = np.array([
-        [0,0,1,2],
-        [1,7,5,0],
-        [2,3,5,6],
-        [0,6,5,2],
-        [0,6,5,6]
+        [4,2,1,2],
+        [5,2,5,2],
+        [2,3,1,6],
+        [1,4,2,4],
+        [3,6,6,5]
     ])
     procAlloc = np.array([
-        [0,0,1,2],
-        [1,0,0,0],
-        [1,3,5,4],
-        [0,6,3,2],
-        [0,0,1,4]
+        [2,0,0,1],
+        [3,1,2,1],
+        [2,1,0,3],
+        [1,3,1,2],
+        [1,4,3,2]
     ])
-    recDisp = np.array([1,5,2,0])
-    #procNec = procMax - procAlloc
+    recDisp = np.array([1,3,2,1])
+    print(procMax - procAlloc)
     #print(procNec)
     banqueiro(procMax, procAlloc, recDisp)
     #pseudopredict(procNec, procAlloc, recDisp)
