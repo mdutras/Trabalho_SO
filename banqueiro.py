@@ -17,7 +17,7 @@ def mergeSort(A, index, start, end):
                     break
 
 def sortMatrix(procNec, recDisp):
-    pesos = np.array([sum(recDisp) / (num if num else 1) for num in recDisp])
+    pesos = np.array([1 / (num if num else 1) for num in recDisp])
     sumM = np.array([sum(A * pesos) for A in procNec])
     index = np.arange(len(procNec))
     mergeSort(sumM, index, 0, len(procNec))
@@ -28,13 +28,14 @@ def pseudopredict(procNec, procAlloc, recDisp):
     tamCol = len(procAlloc)
     tamRow = len(recDisp)
 
-    # Checar se os recursos iniciar são insuficientes pra realizar qualquer processo
+    # Checar se os recursos iniciais são insuficientes pra realizar qualquer processo
     for i in range(tamCol):
-        points = 0
+        doable = True
         if sum([0 if procNec[i][j] > recDisp[j] else 1 for j in range(tamRow)]) < tamRow:
             doable = False
         if doable:
             break
+
     if not doable:
         return doable
 
@@ -47,6 +48,7 @@ def pseudopredict(procNec, procAlloc, recDisp):
         if(allRec[i] < max(procNec[i])):
             doable = False
             break
+
     if not doable:
         return doable
 
@@ -81,7 +83,7 @@ def banqueiro(procMax, procAlloc, recDisp):
         print(" p  i")
         while(0 in termino and hold < len(procNec)):
             for i in index:
-                if(0 not in termino or hold >= len(procNec)): #!TODO: Tentar um jeito melhor de fazer isso
+                if(0 not in termino or hold >= len(procNec)):
                     break
                 steps += 1
                 if(termino[i]):
@@ -98,34 +100,31 @@ def banqueiro(procMax, procAlloc, recDisp):
                     hold += 1
                     print(f"({steps}, {i}) P {hold}")
         if(hold >= len(procNec)):
-            print("Fuleco faleceu ;-;")
+            print("Processo entrou em loop!")
         else:
-            print(f"Levou {steps} passos para completar o algoritmo :)")
+            print(f"Levou {steps} passos para completar o algoritmo!")
     else:
-        print("Não é possível processar a fila de processos")
+        print("Não é possível processar a fila de processos!")
 
 
 def main():
     print("Hi >:3")
     procMax = np.array([
-        [4,2,1,2],
-        [5,2,5,2],
-        [2,3,1,6],
-        [1,4,2,4],
-        [3,6,6,5]
+        [5,1,1,7],
+        [3,2,1,1],
+        [3,3,2,1],
+        [4,6,1,2],
+        [6,3,2,5]
     ])
     procAlloc = np.array([
-        [2,0,0,1],
+        [3,0,1,4],
+        [2,2,1,0],
         [3,1,2,1],
-        [2,1,0,3],
-        [1,3,1,2],
-        [1,4,3,2]
+        [0,5,1,0],
+        [4,2,1,2]
     ])
-    recDisp = np.array([1,3,2,1])
-    print(procMax - procAlloc)
-    #print(procNec)
+    recDisp = np.array([1,0,0,2])
     banqueiro(procMax, procAlloc, recDisp)
-    #pseudopredict(procNec, procAlloc, recDisp)
 
 
 if __name__ == "__main__":
